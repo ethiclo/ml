@@ -14,7 +14,7 @@ COPY . ./
 EXPOSE 8080
 
 # Define environment variable
-COPY /ml/.env /ml/.env
+# COPY /ml/.env /ml/.env
 
 # Run flask when the container launches
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=8080"]
