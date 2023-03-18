@@ -48,8 +48,43 @@ def get_imgs(url: str) -> str:
     return consolidated
 
 
+def sustainability_search(query: str, location: str = "Canada"):
+    """Search sustainability on google.
+    Location is set to Canada by default.
+    """
+    search = GoogleSearch({
+        "q": query,
+        "location": location,
+        "api_key": os.environ.get("SERP_API_KEY")
+    })
+
+    results = search.get_dict()
+
+    # Get the relevant data
+    imgs = results['inline_images']
+    full_product = results['immersive_products']
+    organic_results = results['organic_results']
+
+    # Format the data
+    formatted_results = {}
+    num_items = min(len(imgs), len(full_product), len(organic_results))
+    i = 0
+    while i < num_items:
+        formatted_results[i] = {}
+        formatted_results[i]["brand"] = imgs[i]['source_name']
+        formatted_results[i]["img"] = imgs[i]['original']
+        formatted_results[i]["title"] = imgs[i]['title']
+        formatted_results[i]["url"] = imgs[i]['source']
+        formatted_results[i]["price"] = full_product[i]['price']
+        formatted_results[i]["description"] = organic_results[i]['snippet']
+        i += 1
+
+    return formatted_results
+
+
 if __name__ == "__main__":
     # sample = "https://us.louisvuitton.com/eng-us/products/thistle-embroidered-wavy-denim-jacket-nvprod4160010v/1AB517"
     sample = "https://www.aritzia.com/en/product/gramercy-t-shirt/109006.html?dwvar_109006_color=1275"
     # print(scrape_website_text(sample))
-    print(get_imgs(sample))
+    # print(get_imgs(sample))
+    print(sustainability_search("black square-neck long-sleeve bodysuit"))
