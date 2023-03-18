@@ -4,10 +4,12 @@ import logging
 import sys, os
 from bs4 import BeautifulSoup
 import re
+from dotenv import load_dotenv
+
+load_dotenv()
 
 headers = {'Cache-Control': 'no-cache', 'Content-Type': 'application/json'}
-# params = {'token': os.environ.get("BROWSERLESS_API_KEY")}
-params = {'token': 'b19d64a7-6773-45bd-8b16-4e2bad27a3eb'}
+params = {'token': os.environ.get("BROWSERLESS_API_KEY")}
 
 
 def scrape_website_text(url: str) -> str:
