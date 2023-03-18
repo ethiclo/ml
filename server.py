@@ -20,11 +20,6 @@ def healthcheck():
     """
     return jsonify({'status': 200})
 
-@server.route('/test')
-def test():
-    """Test entrypoint.
-    """
-    return render_template('index.html')
 
 @server.route('/add_shopper/<string:email>', methods=["POST"])
 def add_shopper(email: str):
