@@ -3,7 +3,7 @@ Server for ethiclo
 """
 
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import psycopg2 as pg
 from dotenv import load_dotenv
 
@@ -19,6 +19,12 @@ def healthcheck():
     """Healthcheck entrypoint.
     """
     return jsonify({'status': 200})
+
+@server.route('/test')
+def test():
+    """Test entrypoint.
+    """
+    return render_template('index.html')
 
 @server.route('/add_shopper/<string:email>', methods=["POST"])
 def add_shopper(email: str):
