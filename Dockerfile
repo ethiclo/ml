@@ -14,7 +14,7 @@ COPY . ./
 EXPOSE 8080
 
 # Define environment variable
-ENV FLASK_APP=server.py
+COPY .env .env
 
 # Run flask when the container launches
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=8080"]
