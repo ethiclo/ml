@@ -45,7 +45,7 @@ def add_shopper(email: str):
         conn.close()
         return jsonify({'status': 400, 'error': pg.Error})
     
-@app.route('/get_my_products/<string:email>', methods=["GET"])
+@app.route('/get_my_products/<string:email>', methods=["POST"])
 def get_my_products(email: str):
     # Connect to the db
     conn = connect()
