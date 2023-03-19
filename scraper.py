@@ -32,33 +32,33 @@ def scrape_website_text(url: str) -> str:
     resp = response.json()
     webpage_text = resp['data'][0]['results'][0]['text']
 
-    prompt = """
-        You are a sustainability expert. You are given a product desciption and asked to pick out
-        words that mark the products overall sustainability. For example, the material the product
-        is made of, the manufacturing process, the packaging, the company that makes it, any
-        certifications the product has, etc.
+    # prompt = """
+    #     You are a sustainability expert. You are given a product desciption and asked to pick out
+    #     words that mark the products overall sustainability. For example, the material the product
+    #     is made of, the manufacturing process, the packaging, the company that makes it, any
+    #     certifications the product has, etc.
 
-        Please pick out the words that mark the products overall sustainability: 
-        {}
-    """.format(webpage_text[0:2500])
+    #     Please pick out the words that mark the products overall sustainability: 
+    #     {}
+    # """.format(webpage_text[0:2500])
 
     find_price = r"\$[^\s]*"
     price = re.search(find_price, webpage_text).group(0)    
 
-    completion = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        temperature=0.7,
-        max_tokens=60,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=1
-    )
+    # completion = openai.Completion.create(
+    #     model="text-davinci-003",
+    #     prompt=prompt,
+    #     temperature=0.7,
+    #     max_tokens=60,
+    #     top_p=1.0,
+    #     frequency_penalty=0.0,
+    #     presence_penalty=1
+    # )
 
     # Grabs the picture from the website
     webpage_info = {
         "brand": company_name,
-        "website_text": completion['choices'][0]['text'],
+        "website_text": webpage_text[:2500],
         "price": price
     }
      

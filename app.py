@@ -75,19 +75,24 @@ def add_url():
         cur.execute(insert_product, [data['url'], data['image'], data['title'], 
                                      data['price'], data['brand'], 
                                      'description', data['score'], email])
-        cur.commit()
+
+        # cur.execute(insert_product, ['', '', '', 
+        #                              10, '', 
+        #                              'description', 0, email])
+        
+        conn.commit()
     
         # make the query
-        query = f"{data['classification']} {data['title'].lower().replace(data['brand'].lower(), '')}"
-        sustainable_items = sustainability_search(query, email)
+        # query = f"{data['classification']} {data['title'].lower().replace(data['brand'].lower(), '')}"
+        # sustainable_items = sustainability_search(query, email)
 
-        for item in sustainable_items:
-            # TODO: score the item
-            score = 0
-            cur.execute(insert_product, [item['url'], item['img_src'], item['title'], 
-                                         item['price'], item['brand'], 
-                                         item['description'], score, email])
-            cur.commit()
+        # for item in sustainable_items:
+        #     # TODO: score the item
+        #     score = 0
+        #     cur.execute(insert_product, [item['url'], item['img_src'], item['title'], 
+        #                                  item['price'], item['brand'], 
+        #                                  item['description'], score, email])
+        #     cur.commit()
 
         cur.close()
         conn.close()

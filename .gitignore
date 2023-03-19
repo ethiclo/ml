@@ -130,3 +130,5 @@ dmypy.json
 
 # ml
 models/classification/clothing_model_weights.pt
+models/scoring/prediction_model_weights.pt
+models/scoring/tokenizer
