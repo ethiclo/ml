@@ -4,16 +4,15 @@ Server for ethiclo
 
 import os
 from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
 import psycopg2 as pg
 from dotenv import load_dotenv
 from helpers import handle_url
+from scraper import sustainability_search
 
 load_dotenv()
 
 # Initialize flask app
 app = Flask(__name__)
-CORS(app)
 
 
 # Base route for testing
@@ -80,7 +79,7 @@ def add_url():
         cur.commit()
     
         # make the query
-        query = f"{data['classification']} {alt_text.lower().replace(web_text['brand'].lower(), '')}"
+        query = f"{data['classification']} {data['title'].lower().replace(data['brand'].lower(), '')}"
         sustainable_items = sustainability_search(query, email)
 
         for item in sustainable_items:
