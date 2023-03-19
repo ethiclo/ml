@@ -9,6 +9,7 @@ google-api-python-client
 psycopg2-binary
 openai
 Flask
+Flask-Cors
 gunicorn==20.0.4
 transformers
 bs4
