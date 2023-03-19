@@ -8,6 +8,5 @@ google-search-results
 google-api-python-client
 psycopg2-binary
 openai
-dotenv
 Flask
 gunicorn==20.0.4
