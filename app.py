@@ -5,12 +5,12 @@ Server for ethiclo
 import os
 from flask import Flask, request, jsonify, render_template
 import psycopg2 as pg
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from helpers import handle_url
 from scraper import sustainability_search
 from models.scoring.scoring_classes import predict_sustainability
 
-load_dotenv()
+# load_dotenv()
 
 # Initialize flask app
 app = Flask(__name__)
