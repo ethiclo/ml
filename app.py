@@ -56,6 +56,7 @@ def add_shopper(email: str):
 def add_url():
     """Send a URL to the db.
     """
+    # Get the data from the request
     data = request.get_json()
     url = data['url']
     email = data['email']
@@ -118,11 +119,13 @@ def add_url():
         return jsonify({'status': 400})
 
 
-@app.route('/get_sustainable_products/<string:url>/<string:user>',
-              methods=["GET"])
-def get_sustainable_products(url: str, user: str):
+@app.route('/get_sustainable_products', methods=["GET"])
+def get_sustainable_products():
     """Fetch sustainable alternatives from the database
     """
+    data = request.get_json()
+    url = data['url']
+    email = data['email']
 
     # Get the sustainable alternatives from the db
     get_sustainable_products = """
@@ -136,7 +139,7 @@ def get_sustainable_products(url: str, user: str):
     cur = conn.cursor()
 
     try:
-        cur.execute(get_sustainable_products, [url, user])
+        cur.execute(get_sustainable_products, [url, email])
         products = cur.fetchall()
         cur.close()
         conn.close()
