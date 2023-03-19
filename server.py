@@ -40,7 +40,7 @@ def add_shopper(email: str):
 
     # Insert the user into the db
     try:
-        insert = "INSERT INTO Shopper (email) VALUES (%s);"
+        insert = "INSERT INTO Shopper (email) VALUES (%s)"
         cur.execute(insert, [email])
         conn.commit()
         cur.close()
@@ -63,7 +63,7 @@ def add_url(url: str, email: str):
 
     # Insert the url into the db
     try:
-        insert = "INSERT INTO Website (url, shopper_id) VALUES (%s, %s);"
+        insert = "INSERT INTO Website (url, shopper) VALUES (%s, %s);"
         cur.execute(insert, [url, email])
         conn.commit()
 
@@ -71,41 +71,41 @@ def add_url(url: str, email: str):
         # the db.
 
         # Get the sustainability words and image from the URL
-        web_text = scrape_website_text(url)
-        alt_text, image = get_imgs(url)
+        # web_text = scrape_website_text(url)
+        # alt_text, image = get_imgs(url)
 
-        # Load the classification model
-        model = ResNet15(3, len(classes))
-        model.load_state_dict(torch.load('models/classification/clothing_model_weights.pt'))
+        # # Load the classification model
+        # model = ResNet15(3, len(classes))
+        # model.load_state_dict(torch.load('models/classification/clothing_model_weights.pt'))
         
-        # Classify the image
-        classification = classify_img(image, model)
+        # # Classify the image
+        # classification = classify_img(image, model)
 
-        # Give it a score
-        # TODO: Add scoring model once completed
-        score = 0
+        # # Give it a score
+        # # TODO: Add scoring model once completed
+        # score = 0
 
-        # insert the product into the db
-        insert_product = """
-            INSERT INTO Product (url, img_src, title, price, brand, description, score, shopper_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-        """
-        cur.execute(insert_product, [url, image, alt_text, 
-                                     web_text['price'], web_text['brand'], 
-                                     'description', score, email])
-        cur.commit()
+        # # insert the product into the db
+        # insert_product = """
+        #     INSERT INTO Product (url, img_src, title, price, brand, description, score, shopper_id)
+        #     VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        # """
+        # cur.execute(insert_product, [url, image, alt_text, 
+        #                              web_text['price'], web_text['brand'], 
+        #                              'description', score, email])
+        # cur.commit()
     
-        # make the query
-        query = f"{classification} {alt_text.lower().replace(web_text['brand'].lower(), '')}"
-        sustainable_items = sustainability_search(query, email)
+        # # make the query
+        # query = f"{classification} {alt_text.lower().replace(web_text['brand'].lower(), '')}"
+        # sustainable_items = sustainability_search(query, email)
 
-        for item in sustainable_items:
-            # TODO: score the item
-            score = 0
-            cur.execute(insert_product, [item['url'], item['img_src'], item['title'], 
-                                         item['price'], item['brand'], 
-                                         item['description'], score, email])
-            cur.commit()
+        # for item in sustainable_items:
+        #     # TODO: score the item
+        #     score = 0
+        #     cur.execute(insert_product, [item['url'], item['img_src'], item['title'], 
+        #                                  item['price'], item['brand'], 
+        #                                  item['description'], score, email])
+        #     cur.commit()
 
         cur.close()
         conn.close()
