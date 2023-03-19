@@ -130,7 +130,7 @@ def add_url():
         return jsonify({'status': 400, 'error': pg.Error})
 
 
-@app.route('/get_sustainable_products', methods=["GET"])
+@app.route('/get_sustainable_products', methods=["POST"])
 def get_sustainable_products():
     """Fetch sustainable alternatives from the database
     """
