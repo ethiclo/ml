@@ -5,6 +5,7 @@ Server for ethiclo
 import os
 from flask import Flask, request, jsonify, render_template
 import psycopg2 as pg
+from flask_cors import CORS
 # from dotenv import load_dotenv
 from helpers import handle_url
 from scraper import sustainability_search
@@ -14,6 +15,7 @@ from models.scoring.scoring_classes import predict_sustainability
 
 # Initialize flask app
 app = Flask(__name__)
+CORS(app)
 
 # Base route for testing
 @app.route('/')
@@ -59,7 +61,24 @@ def get_my_products(email: str):
         resp = cur.fetchall()
         cur.close()
         conn.close()
-        return jsonify({'status': 200, 'products': resp})
+        # print(jsonify(resp))
+
+        prod = []
+        for product in resp:
+            new = {}
+            new['id'] = product[0]
+            new['url'] = product[1]
+            new['img_src'] = product[2]
+            new['title'] = product[3]
+            new['price'] = product[4]
+            new['brand'] = product[5]
+            new['description'] = product[6]
+            new['score'] = product[7]
+            prod.append(new)
+        print(prod)
+        cur.close()
+        conn.close()
+        return jsonify(prod)
     except pg.Error:
         cur.close()
         conn.close()
@@ -109,6 +128,7 @@ def add_url():
     
         # make the query
         query = f"{data['classification']} {data['title'].lower().replace(data['brand'].lower(), '')}"
+        print(f"This is the query: {query}\n\n\n")
         sustainable_items = sustainability_search(query)
 
         for item in sustainable_items:
@@ -151,10 +171,24 @@ def get_sustainable_products():
 
     try:
         cur.execute(get_sustainable_products, [url, email])
-        products = cur.fetchall()
+        resp = cur.fetchall()
+        prod = []
+        for product in resp:
+            new = {}
+            new['id'] = product[0]
+            new['url'] = product[1]
+            new['img_src'] = product[2]
+            new['title'] = product[3]
+            new['price'] = product[4]
+            new['brand'] = product[5]
+            new['description'] = product[6]
+            new['score'] = product[7]
+            prod.append(new)
+        print(prod)
         cur.close()
         conn.close()
-        return jsonify(products)
+        total = len(prod)
+        return jsonify(prod[total - int(total /2):])
     except pg.Error:
         cur.close()
         conn.close()

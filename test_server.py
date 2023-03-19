@@ -11,8 +11,7 @@ def test_get_products():
     resp = requests.get(BASE_URL + '/get_my_products/mdawes')
     print(resp.json())
 
-def test_add_url():
-    url = "https://www.nike.com/ca/t/fc-football-tracksuit-wB5QDv/DC9065-010"
+def test_add_url(url):
     endpoint = "/add_url"
     data = {
         "url": url,
@@ -33,6 +32,9 @@ def test_get_sustainable_products():
 
 if __name__ == "__main__":
     # test_create()
-    test_add_url()
-    # test_get_sustainable_products()
+    # url1 = "https://www.nike.com/ca/t/fc-football-tracksuit-wB5QDv/DC9065-010"
+    # test_add_url(url1)
+    # url2 = "https://www.nike.com/ca/t/alphafly-2-road-racing-shoes-1wG4D7/DZ4784-304"
+    # test_add_url(url2)
+    test_get_sustainable_products()
     # test_get_products()

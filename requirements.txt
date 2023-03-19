@@ -11,3 +11,4 @@ openai
 Flask
 gunicorn==20.0.4
 transformers
+bs4
