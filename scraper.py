@@ -7,7 +7,7 @@ import re
 # from dotenv import load_dotenv
 import openai
 
-load_dotenv()
+# load_dotenv()
 
 headers = {'Cache-Control': 'no-cache', 'Content-Type': 'application/json'}
 params = {'token': os.environ.get("BROWSERLESS_API_KEY")}
