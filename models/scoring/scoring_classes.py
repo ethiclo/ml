@@ -17,13 +17,13 @@ class BERTRegressor(nn.Module):
     
 def load_model():
     model = BERTRegressor()
-    model.load_state_dict(torch.load("model_weights.pt"))
+    model.load_state_dict(torch.load("models/scoring/prediction_model_weights.pt"))
 
     # Load the tokenizer's configuration and vocabulary
-    tokenizer = BertTokenizer.from_pretrained("tokenizer")
+    tokenizer = BertTokenizer.from_pretrained("models/scoring/tokenizer")
     return model, tokenizer
 
-def predict(texts, max_length=128, device="cpu"):
+def predict_sustainability(texts, max_length=128, device="cpu"):
     model, tokenizer = load_model()
     model.eval()
     model.to(device)

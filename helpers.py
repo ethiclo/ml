@@ -2,6 +2,7 @@ import torch
 
 # Get the classification model
 from models.classification.classification_classes import ResNet15, classify_img, classes
+from models.scoring.scoring_classes import predict_sustainability
 
 # Get the scraper
 from scraper import scrape_website_text, get_imgs, sustainability_search
@@ -23,7 +24,9 @@ def handle_url(url):
 
     # Give it a score
     # TODO: Add scoring model once completed
-    score = 0
+    text = [f"{web_text['brand']} {alt_text.lower().replace(web_text['brand'].lower(), '')}"]
+    predictions = predict_sustainability(text)
+    score = predictions.tolist()
 
     # Return the data
     return {
@@ -36,6 +39,3 @@ def handle_url(url):
         'score': score,
         'classification': classification,
     }
-
-def predict_sustainability():
-    """Predict the sustainability of a product."""

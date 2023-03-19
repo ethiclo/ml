@@ -55,7 +55,6 @@ def scrape_website_text(url: str) -> str:
     #     presence_penalty=1
     # )
 
-    # Grabs the picture from the website
     webpage_info = {
         "brand": company_name,
         "website_text": webpage_text[:2500],
@@ -118,7 +117,8 @@ def sustainability_search(query: str, location: str = "Canada"):
 
 if __name__ == "__main__":
     # sample = "https://us.louisvuitton.com/eng-us/products/thistle-embroidered-wavy-denim-jacket-nvprod4160010v/1AB517"
-    sample = "https://www.nike.com/ca/t/fc-football-tracksuit-wB5QDv/DC9065-010"
+    # sample = "https://www.nike.com/ca/t/fc-football-tracksuit-wB5QDv/DC9065-010"
     # print(scrape_website_text(sample))
     # print(get_imgs(sample))
-    print(len(sustainability_search("black square-neck long-sleeve bodysuit")))
+    # print(sustainability_search("black square-neck long-sleeve bodysuit"))
+    pass
