@@ -69,14 +69,22 @@ def add_url():
 
         # insert the product into the db
         insert_product = """
-            INSERT INTO Product (url, img_src, title, price, brand, description, score, shopper)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            INSERT INTO Product (url, img_src, title, price, brand, description, score, alt_to, shopper)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         cur.execute(insert_product, [data['url'], data['image'], data['title'], 
                                      float(data['price'][1:]), data['brand'], 
-                                     'description', data['score'], email])
+                                     'description', data['score'], 0, email])
         
         conn.commit()
+
+        # Get the product id
+        get_product_id = """
+            SELECT product_id FROM Product
+            WHERE url = %s AND shopper = %s;
+        """
+        cur.execute(get_product_id, [data['url'], email])
+        product_id = cur.fetchone()[0]
     
         # make the query
         query = f"{data['classification']} {data['title'].lower().replace(data['brand'].lower(), '')}"
@@ -87,7 +95,7 @@ def add_url():
             score = 0
             cur.execute(insert_product, [sustainable_items[item]['url'], sustainable_items[item]['img'], sustainable_items[item]['title'], 
                                          float(sustainable_items[item]['price'][1:]), sustainable_items[item]['brand'], 
-                                         sustainable_items[item]['description'], score, email])
+                                         sustainable_items[item]['description'], score, product_id, email])
             conn.commit()
 
         cur.close()
@@ -112,7 +120,7 @@ def get_sustainable_products():
         SELECT * FROM Product
         WHERE alt_to IN (
             SELECT product_id FROM Product
-            WHERE url = %s AND shopper_id = %s
+            WHERE url = %s AND shopper = %s
         );
     """
     conn = connect()
@@ -123,11 +131,11 @@ def get_sustainable_products():
         products = cur.fetchall()
         cur.close()
         conn.close()
-        return jsonify({'status': 200, 'products': products})
+        return jsonify(products)
     except pg.Error:
         cur.close()
         conn.close()
-        return jsonify({'status': 400})
+        return jsonify({'status': 400, 'error': pg.Error})
 
 
 def connect():
