@@ -8,3 +8,4 @@ matplotlib
 google-search-results
 google-api-python-client
 psycopg2-binary
+openai

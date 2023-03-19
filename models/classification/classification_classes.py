@@ -126,9 +126,5 @@ def classify_img(url, model):
     image_tensor = T.Normalize(*imagenet_stats)(image_tensor)
     #print(image_tensor.shape)
     preds = model(image_tensor)
-    prediction = preds[0]
-    print("Prediction:")
-    print("Tensor: ", prediction)
-    print()
-    print("Label:", decode_target(prediction))
-    plt.imshow(image)     
+    prediction = preds[0] 
+    return decode_target(prediction)

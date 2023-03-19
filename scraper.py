@@ -5,15 +5,20 @@ import sys, os
 from bs4 import BeautifulSoup
 import re
 from dotenv import load_dotenv
+import openai
 
 load_dotenv()
 
 headers = {'Cache-Control': 'no-cache', 'Content-Type': 'application/json'}
 params = {'token': os.environ.get("BROWSERLESS_API_KEY")}
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 def scrape_website_text(url: str) -> str:
     """Scrape the website text."""
+    # Get the company name
+    company_name = re.search(r'(?<=www\.)\w+', url).group(0)
+
     targets = {
         "url": url,
         "elements": [
@@ -27,9 +32,37 @@ def scrape_website_text(url: str) -> str:
     resp = response.json()
     webpage_text = resp['data'][0]['results'][0]['text']
 
-    # Grabs the pitcure from the website
+    prompt = """
+        You are a sustainability expert. You are given a product desciption and asked to pick out
+        words that mark the products overall sustainability. For example, the material the product
+        is made of, the manufacturing process, the packaging, the company that makes it, any
+        certifications the product has, etc.
+
+        Please pick out the words that mark the products overall sustainability: 
+        {}
+    """.format(webpage_text[0:2500])
+
+    find_price = r"\$[^\s]*"
+    price = re.search(find_price, webpage_text).group(0)    
+
+    completion = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=60,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=1
+    )
+
+    # Grabs the picture from the website
+    webpage_info = {
+        "brand": company_name,
+        "website_text": completion['choices'][0]['text'],
+        "price": price
+    }
      
-    return webpage_text
+    return webpage_info
 
 
 def get_imgs(url: str) -> str:
@@ -45,7 +78,8 @@ def get_imgs(url: str) -> str:
         if alt_text is not None:
             consolidated.append([alt_text, img_src])
 
-    return consolidated
+    # Return the last image
+    return consolidated[-1]
 
 
 def sustainability_search(query: str, location: str = "Canada"):
@@ -84,7 +118,7 @@ def sustainability_search(query: str, location: str = "Canada"):
 
 if __name__ == "__main__":
     # sample = "https://us.louisvuitton.com/eng-us/products/thistle-embroidered-wavy-denim-jacket-nvprod4160010v/1AB517"
-    sample = "https://www.aritzia.com/en/product/gramercy-t-shirt/109006.html?dwvar_109006_color=1275"
+    sample = "https://www.nike.com/ca/t/fc-football-tracksuit-wB5QDv/DC9065-010"
     # print(scrape_website_text(sample))
     # print(get_imgs(sample))
-    print(sustainability_search("black square-neck long-sleeve bodysuit"))
+    print(len(sustainability_search("black square-neck long-sleeve bodysuit")))
