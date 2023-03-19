@@ -162,10 +162,4 @@ def connect():
 
 
 if __name__ == '__main__':
-    # Port 8080 expected by cloudrun
-    # app.run(port=int(os.environ.get("PORT", 8080)),
-    #         host='0.0.0.0', threaded=True)
-    # app.run(host="0.0.0.0", port=8080, threaded=True)
-    app.run(host="0.0.0.0", port=int(
-        os.environ.get("PORT", 4000)), threaded=True)
-    # print(os.environ)
+    app.run(debug=True, port=os.getenv("PORT", default=5000))
