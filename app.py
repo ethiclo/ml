@@ -8,6 +8,7 @@ import psycopg2 as pg
 from dotenv import load_dotenv
 from helpers import handle_url
 from scraper import sustainability_search
+from models.scoring.scoring_classes import predict_sustainability
 
 load_dotenv()
 
@@ -112,7 +113,9 @@ def add_url():
 
         for item in sustainable_items:
             # TODO: score the item
-            score = 0
+            text = [f"{sustainable_items[item]['brand']} {sustainable_items[item]['title']}"]
+            predictions = predict_sustainability(text)
+            score = predictions.tolist()
             cur.execute(insert_product, [sustainable_items[item]['url'], sustainable_items[item]['img'], sustainable_items[item]['title'], 
                                          float(sustainable_items[item]['price'][1:]), sustainable_items[item]['brand'], 
                                          sustainable_items[item]['description'], score, product_id, email])
