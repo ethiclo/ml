@@ -4,7 +4,7 @@ import logging
 import sys, os
 from bs4 import BeautifulSoup
 import re
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import openai
 
 load_dotenv()
