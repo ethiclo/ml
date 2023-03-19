@@ -17,19 +17,19 @@ from models.classification.classification_classes import ResNet15, classify_img,
 load_dotenv()
 
 # Initialize flask app
-server = Flask(__name__)
-CORS(server)
+app = Flask(__name__)
+CORS(app)
 
 
 # Base route for testing
-@server.route('/')
+@app.route('/')
 def healthcheck():
     """Healthcheck entrypoint.
     """
     return jsonify({'status': 200})
 
 
-@server.route('/add_shopper/<string:email>', methods=["POST"])
+@app.route('/add_shopper/<string:email>', methods=["POST"])
 def add_shopper(email: str):
     """Add a shopper to the db.
     """
@@ -52,11 +52,13 @@ def add_shopper(email: str):
         return jsonify({'status': 400, 'error': pg.Error})
 
 
-@server.route('/add_url/<string:url>/<string:email>', methods=["POST"])
-def add_url(url: str, email: str):
+@app.route('/add_url', methods=["POST"])
+def add_url():
     """Send a URL to the db.
     """
-
+    data = request.get_json()
+    url = data['url']
+    email = data['email']
     # Connect to the db
     conn = connect()
     cur = conn.cursor()
@@ -71,41 +73,41 @@ def add_url(url: str, email: str):
         # the db.
 
         # Get the sustainability words and image from the URL
-        # web_text = scrape_website_text(url)
-        # alt_text, image = get_imgs(url)
+        web_text = scrape_website_text(url)
+        alt_text, image = get_imgs(url)
 
-        # # Load the classification model
-        # model = ResNet15(3, len(classes))
-        # model.load_state_dict(torch.load('models/classification/clothing_model_weights.pt'))
+        # Load the classification model
+        model = ResNet15(3, len(classes))
+        model.load_state_dict(torch.load('models/classification/clothing_model_weights.pt'))
         
-        # # Classify the image
-        # classification = classify_img(image, model)
+        # Classify the image
+        classification = classify_img(image, model)
 
-        # # Give it a score
-        # # TODO: Add scoring model once completed
-        # score = 0
+        # Give it a score
+        # TODO: Add scoring model once completed
+        score = 0
 
-        # # insert the product into the db
-        # insert_product = """
-        #     INSERT INTO Product (url, img_src, title, price, brand, description, score, shopper_id)
-        #     VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-        # """
-        # cur.execute(insert_product, [url, image, alt_text, 
-        #                              web_text['price'], web_text['brand'], 
-        #                              'description', score, email])
-        # cur.commit()
+        # insert the product into the db
+        insert_product = """
+            INSERT INTO Product (url, img_src, title, price, brand, description, score, shopper_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        """
+        cur.execute(insert_product, [url, image, alt_text, 
+                                     web_text['price'], web_text['brand'], 
+                                     'description', score, email])
+        cur.commit()
     
-        # # make the query
-        # query = f"{classification} {alt_text.lower().replace(web_text['brand'].lower(), '')}"
-        # sustainable_items = sustainability_search(query, email)
+        # make the query
+        query = f"{classification} {alt_text.lower().replace(web_text['brand'].lower(), '')}"
+        sustainable_items = sustainability_search(query, email)
 
-        # for item in sustainable_items:
-        #     # TODO: score the item
-        #     score = 0
-        #     cur.execute(insert_product, [item['url'], item['img_src'], item['title'], 
-        #                                  item['price'], item['brand'], 
-        #                                  item['description'], score, email])
-        #     cur.commit()
+        for item in sustainable_items:
+            # TODO: score the item
+            score = 0
+            cur.execute(insert_product, [item['url'], item['img_src'], item['title'], 
+                                         item['price'], item['brand'], 
+                                         item['description'], score, email])
+            cur.commit()
 
         cur.close()
         conn.close()
@@ -116,7 +118,7 @@ def add_url(url: str, email: str):
         return jsonify({'status': 400})
 
 
-@server.route('/get_sustainable_products/<string:url>/<string:user>',
+@app.route('/get_sustainable_products/<string:url>/<string:user>',
               methods=["GET"])
 def get_sustainable_products(url: str, user: str):
     """Fetch sustainable alternatives from the database
@@ -164,6 +166,6 @@ if __name__ == '__main__':
     # app.run(port=int(os.environ.get("PORT", 8080)),
     #         host='0.0.0.0', threaded=True)
     # app.run(host="0.0.0.0", port=8080, threaded=True)
-    server.run(host="0.0.0.0", port=int(
+    app.run(host="0.0.0.0", port=int(
         os.environ.get("PORT", 4000)), threaded=True)
     # print(os.environ)
