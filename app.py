@@ -7,12 +7,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import psycopg2 as pg
 from dotenv import load_dotenv
-import torch
-
-# Get the scraper
-from scraper import scrape_website_text, get_imgs, sustainability_search
-# Get the classification model
-from models.classification.classification_classes import ResNet15, classify_img, classes
+from helpers import handle_url
 
 load_dotenv()
 
@@ -70,36 +65,22 @@ def add_url():
         cur.execute(insert, [url, email])
         conn.commit()
 
-        # TODO: Run the model to find sustainable alternatives and add them to
-        # the db.
+        # TODO: Call helper function
 
-        # Get the sustainability words and image from the URL
-        web_text = scrape_website_text(url)
-        alt_text, image = get_imgs(url)
-
-        # Load the classification model
-        model = ResNet15(3, len(classes))
-        model.load_state_dict(torch.load('models/classification/clothing_model_weights.pt'))
-        
-        # Classify the image
-        classification = classify_img(image, model)
-
-        # Give it a score
-        # TODO: Add scoring model once completed
-        score = 0
+        data = handle_url(url)
 
         # insert the product into the db
         insert_product = """
-            INSERT INTO Product (url, img_src, title, price, brand, description, score, shopper_id)
+            INSERT INTO Product (url, img_src, title, price, brand, description, score, shopper)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
         """
-        cur.execute(insert_product, [url, image, alt_text, 
-                                     web_text['price'], web_text['brand'], 
-                                     'description', score, email])
+        cur.execute(insert_product, [data['url'], data['image'], data['title'], 
+                                     data['price'], data['brand'], 
+                                     'description', data['score'], email])
         cur.commit()
     
         # make the query
-        query = f"{classification} {alt_text.lower().replace(web_text['brand'].lower(), '')}"
+        query = f"{data['classification']} {alt_text.lower().replace(web_text['brand'].lower(), '')}"
         sustainable_items = sustainability_search(query, email)
 
         for item in sustainable_items:
