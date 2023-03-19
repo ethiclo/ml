@@ -10,3 +10,4 @@ psycopg2-binary
 openai
 Flask
 gunicorn==20.0.4
+transformers
