@@ -4,7 +4,6 @@ Server for ethiclo
 
 import os
 from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
 import psycopg2 as pg
 from dotenv import load_dotenv
 from helpers import handle_url
@@ -14,8 +13,6 @@ load_dotenv()
 
 # Initialize flask app
 app = Flask(__name__)
-CORS(app)
-
 
 # Base route for testing
 @app.route('/')

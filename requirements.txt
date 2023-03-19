@@ -10,7 +10,6 @@ google-api-python-client
 psycopg2-binary
 openai
 dotenv
-flask_cors
 click==7.1.2
 Flask==1.1.2
 gunicorn==20.0.4
