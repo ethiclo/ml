@@ -73,26 +73,22 @@ def add_url():
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
         """
         cur.execute(insert_product, [data['url'], data['image'], data['title'], 
-                                     data['price'], data['brand'], 
+                                     float(data['price'][1:]), data['brand'], 
                                      'description', data['score'], email])
-
-        # cur.execute(insert_product, ['', '', '', 
-        #                              10, '', 
-        #                              'description', 0, email])
         
         conn.commit()
     
         # make the query
-        # query = f"{data['classification']} {data['title'].lower().replace(data['brand'].lower(), '')}"
-        # sustainable_items = sustainability_search(query, email)
+        query = f"{data['classification']} {data['title'].lower().replace(data['brand'].lower(), '')}"
+        sustainable_items = sustainability_search(query)
 
-        # for item in sustainable_items:
-        #     # TODO: score the item
-        #     score = 0
-        #     cur.execute(insert_product, [item['url'], item['img_src'], item['title'], 
-        #                                  item['price'], item['brand'], 
-        #                                  item['description'], score, email])
-        #     cur.commit()
+        for item in sustainable_items:
+            # TODO: score the item
+            score = 0
+            cur.execute(insert_product, [sustainable_items[item]['url'], sustainable_items[item]['img'], sustainable_items[item]['title'], 
+                                         float(sustainable_items[item]['price'][1:]), sustainable_items[item]['brand'], 
+                                         sustainable_items[item]['description'], score, email])
+            conn.commit()
 
         cur.close()
         conn.close()
@@ -100,7 +96,7 @@ def add_url():
     except pg.Error:
         cur.close()
         conn.close()
-        return jsonify({'status': 400})
+        return jsonify({'status': 400, 'error': pg.Error})
 
 
 @app.route('/get_sustainable_products', methods=["GET"])
