@@ -43,6 +43,27 @@ def add_shopper(email: str):
         cur.close()
         conn.close()
         return jsonify({'status': 400, 'error': pg.Error})
+    
+@app.route('/get_my_products/<string:email>', methods=["GET"])
+def get_my_products(email: str):
+    # Connect to the db
+    conn = connect()
+    cur = conn.cursor()
+    print("Connected to db")
+
+    # Insert the user into the db
+    try:
+        products = "SELECT * FROM Product WHERE shopper = %s AND alt_to = 0"
+        cur.execute(products, [email])
+        resp = cur.fetchall()
+        cur.close()
+        conn.close()
+        return jsonify({'status': 200, 'products': resp})
+    except pg.Error:
+        cur.close()
+        conn.close()
+        return jsonify({'status': 400, 'error': pg.Error})
+
 
 
 @app.route('/add_url', methods=["POST"])
@@ -64,7 +85,6 @@ def add_url():
         conn.commit()
 
         # TODO: Call helper function
-
         data = handle_url(url)
 
         # insert the product into the db
