@@ -52,7 +52,7 @@ def add_shopper(email: str):
         return jsonify({'status': 400, 'error': pg.Error})
 
 
-@server.route('/send_url/<string:url>/<string:email>', methods=["POST"])
+@server.route('/add_url/<string:url>/<string:email>', methods=["POST"])
 def add_url(url: str, email: str):
     """Send a URL to the db.
     """
